@@ -1,1 +1,9 @@
 
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create-drop
