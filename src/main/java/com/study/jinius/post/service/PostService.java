@@ -23,8 +23,7 @@ public class PostService {
         return CreatePostResponse.from(result);
     }
 
-    public UpdatePostResponse updatePost(UpdatePostParam param) {
-        Long idx = param.getIdx();
+    public UpdatePostResponse updatePost(Long idx, UpdatePostParam param) {
         Post post = postRepository.findById(idx).orElseThrow();
 
         post.updatePost(param.getContent(), param.getStatus());

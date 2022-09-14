@@ -24,9 +24,9 @@ public class PostController {
     }
 
     @Operation(summary = "게시물 수정", tags = "PostController")
-    @PutMapping
-    public CommonResponse<UpdatePostResponse> updatePost(@RequestBody UpdatePostRequest request) {
-        UpdatePostResponse response = postService.updatePost(request.toParam());
+    @PutMapping("/{idx}")
+    public CommonResponse<UpdatePostResponse> updatePost(@PathVariable Long idx, @RequestBody UpdatePostRequest request) {
+        UpdatePostResponse response = postService.updatePost(idx, request.toParam());
         return new CommonResponse<>(HttpStatus.OK, response);
     }
 
