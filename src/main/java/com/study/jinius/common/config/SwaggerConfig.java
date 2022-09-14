@@ -17,7 +17,7 @@ public class SwaggerConfig {
 
     @Bean
     public GroupedOpenApi groupedOpenApi() {
-        String[] paths = {"/post"};
+        String[] paths = {"/posts"};
 
         return GroupedOpenApi.builder()
                 .group("jinius")

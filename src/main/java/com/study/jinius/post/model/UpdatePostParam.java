@@ -9,8 +9,6 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class UpdatePostParam {
-    private Long idx;
-
     private String content;
 
     private Long accountId;

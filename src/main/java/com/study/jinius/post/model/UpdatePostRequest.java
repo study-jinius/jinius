@@ -5,8 +5,6 @@ import lombok.Getter;
 
 @Getter
 public class UpdatePostRequest {
-    private Long idx;
-
     private String content;
 
     private Long accountId;
@@ -15,7 +13,6 @@ public class UpdatePostRequest {
 
     public UpdatePostParam toParam() {
         UpdatePostParam param = new UpdatePostParam();
-        param.setIdx(this.idx);
         param.setContent(this.content);
         param.setAccountId(this.accountId);
         param.setStatus(this.status);
