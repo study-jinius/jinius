@@ -1,5 +1,6 @@
 package com.study.jinius.post.model;
 
+import com.study.jinius.comment.model.Comment;
 import com.study.jinius.common.model.Status;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -7,6 +8,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -18,14 +21,19 @@ public class Post {
 
     private String content;
 
+    @Column(nullable = false)
     private Long accountId;
 
     private LocalDateTime createDate;
 
     private LocalDateTime updateDate;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Status status;
+
+    @OneToMany(mappedBy = "post")
+    private List<Comment> commentList = new ArrayList<>();
 
     public Post(String content,
                 Long accountId,
@@ -47,5 +55,13 @@ public class Post {
 
     public void deletePost() {
         this.status = Status.DELETED;
+    }
+
+    public void addComment(Comment comment) {
+        this.commentList.add(comment);
+
+        if (comment.getPost() != this) {
+            comment.setPost(this);
+        }
     }
 }
