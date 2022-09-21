@@ -6,14 +6,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
-public class AttachmentResponse {
+public class AttachmentUploadResponse {
     private Long idx;
     private String uploadName;
     private String message;
 
     // 정상 케이스
-    public static AttachmentResponse from(Attachment attachment) {
-        AttachmentResponse response = new AttachmentResponse();
+    public static AttachmentUploadResponse from(Attachment attachment) {
+        AttachmentUploadResponse response = new AttachmentUploadResponse();
         response.setIdx(attachment.getIdx());
         response.setUploadName(attachment.getUploadName());
         response.setMessage(Result.SUCCESS.getMessage());
@@ -22,8 +22,8 @@ public class AttachmentResponse {
     }
 
     // 오류 발생 케이스
-    public static AttachmentResponse from(MultipartFile file, Result result) {
-        AttachmentResponse response = new AttachmentResponse();
+    public static AttachmentUploadResponse from(MultipartFile file, Result result) {
+        AttachmentUploadResponse response = new AttachmentUploadResponse();
         response.setIdx(-1L);
         response.setUploadName(file.getName());
         response.setMessage(result.getMessage());
