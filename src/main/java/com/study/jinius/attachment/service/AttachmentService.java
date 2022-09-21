@@ -1,33 +1,40 @@
 package com.study.jinius.attachment.service;
 
 import com.study.jinius.attachment.model.Attachment;
-import com.study.jinius.attachment.model.AttachmentResponse;
+import com.study.jinius.attachment.model.AttachmentDownloadResponse;
+import com.study.jinius.attachment.model.AttachmentUploadResponse;
 import com.study.jinius.attachment.model.Result;
 import com.study.jinius.attachment.repository.AttachmentRepository;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
 
 import static org.springframework.http.MediaType.*;
 
 @Service
-@RequiredArgsConstructor
 public class AttachmentService {
-    private final String PATH = "/Users/jduckling_1024/study/project/files";
     private final AttachmentRepository attachmentRepository;
+    private final Path path;
+
+    public AttachmentService(AttachmentRepository attachmentRepository) {
+        this.attachmentRepository = attachmentRepository;
+        // TODO: yaml로 빼서 관리하도록 하기
+        this.path = Path.of("/Users/jduckling_1024/study/project/files");
+    }
 
     @Transactional
-    public List<AttachmentResponse> upload(MultipartFile[] files) throws IOException {
+    public List<AttachmentUploadResponse> upload(MultipartFile[] files) throws IOException {
         Map<Result, List<String>> wrongFileMap = new HashMap<>();
         List<Attachment> attachmentList = new ArrayList<>();
 
@@ -46,11 +53,26 @@ public class AttachmentService {
 
         for (MultipartFile file : files) {
             String storedFileName = storeFile(file);
-            attachmentList.add(new Attachment(file.getOriginalFilename(), storedFileName));
+            attachmentList.add(new Attachment(file.getOriginalFilename(), storedFileName, file.getContentType()));
         }
 
         List<Attachment> resultList = attachmentRepository.saveAll(attachmentList);
-        return resultList.stream().map(AttachmentResponse::from).toList();
+        return resultList.stream().map(AttachmentUploadResponse::from).toList();
+    }
+
+    @Transactional
+    public AttachmentDownloadResponse download(String storedName) throws MalformedURLException {
+        Attachment attachment = attachmentRepository.findByStoredName(storedName).orElseThrow();
+
+        if (StringUtils.isBlank(attachment.getMediaType())) {
+            // TODO: 예외 처리
+        }
+
+        Path filePath = path.resolve(attachment.getStoredName());
+        URI uri = filePath.toUri();
+
+        UrlResource urlResource = new UrlResource(uri);
+        return AttachmentDownloadResponse.from(attachment, urlResource);
     }
 
     private Result checkMultiFile(MultipartFile file) {
@@ -67,7 +89,7 @@ public class AttachmentService {
         String storedName;
         do {
             storedName = UUID.randomUUID() + "." + extension;
-        } while (attachmentRepository.findByStoredName(storedName) != null);
+        } while (attachmentRepository.findByStoredName(storedName).isPresent());
 
         return storedName;
     }
@@ -82,8 +104,8 @@ public class AttachmentService {
         String extension = fileNameToken[fileNameToken.length - 1];
 
         String storedName = createStoredName(extension);
-        Path path = Paths.get(PATH + "/" + storedName);
-        Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+        Path filePath = path.resolve(storedName);
+        Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
         return storedName;
     }

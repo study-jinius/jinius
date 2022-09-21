@@ -21,8 +21,13 @@ public class Attachment {
 
     private String storedName;
 
-    public Attachment(String uploadName, String storedName) {
+    private String mediaType;
+
+    public Attachment(String uploadName,
+                      String storedName,
+                      String mediaType) {
         this.uploadName = uploadName;
         this.storedName = storedName;
+        this.mediaType = mediaType;
     }
 }
