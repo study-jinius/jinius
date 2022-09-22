@@ -1,5 +1,6 @@
 package com.study.jinius.attachment.service;
 
+import com.study.jinius.attachment.exception.UnsupportedFileException;
 import com.study.jinius.attachment.model.Attachment;
 import com.study.jinius.attachment.model.AttachmentDownloadResponse;
 import com.study.jinius.attachment.model.AttachmentUploadResponse;
@@ -48,7 +49,7 @@ public class AttachmentService {
         }
 
         if (!CollectionUtils.isEmpty(wrongFileMap)) {
-            // TODO: 예외처리
+            throw new UnsupportedFileException("파일 업로드에 실패했습니다 " + wrongFileMap);
         }
 
         for (MultipartFile file : files) {
@@ -65,7 +66,7 @@ public class AttachmentService {
         Attachment attachment = attachmentRepository.findByStoredName(storedName).orElseThrow();
 
         if (StringUtils.isBlank(attachment.getMediaType())) {
-            // TODO: 예외 처리
+            throw new UnsupportedFileException("알 수 없는 파일 타입입니다.");
         }
 
         Path filePath = path.resolve(attachment.getStoredName());

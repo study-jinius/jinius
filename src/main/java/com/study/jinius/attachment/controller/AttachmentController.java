@@ -1,11 +1,11 @@
 package com.study.jinius.attachment.controller;
 
+import com.study.jinius.attachment.exception.UnsupportedFileException;
 import com.study.jinius.attachment.model.AttachmentDownloadResponse;
 import com.study.jinius.attachment.model.AttachmentUploadResponse;
 import com.study.jinius.attachment.service.AttachmentService;
 import com.study.jinius.common.model.CommonResponse;
 import io.swagger.v3.oas.annotations.Operation;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -51,5 +51,10 @@ public class AttachmentController {
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @ExceptionHandler(value = UnsupportedFileException.class)
+    public CommonResponse<String> handleUnsupportedFileException(UnsupportedFileException e) {
+        return new CommonResponse<>(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 }
