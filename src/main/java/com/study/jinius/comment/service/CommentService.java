@@ -45,7 +45,7 @@ public class CommentService {
 
         Post post = comment.getPost();
         if (Status.DELETED.equals(post.getStatus())) {
-            // TODO: 예외처리
+            throw new IllegalArgumentException("삭제된 게시물입니다.");
         }
 
         Comment result = commentRepository.save(comment);
@@ -65,7 +65,7 @@ public class CommentService {
         Post post = postRepository.findById(postIdx).orElseThrow();
 
         if (Status.DELETED.equals(post.getStatus())) {
-            // TODO: 예외처리
+            throw new IllegalArgumentException("삭제된 게시물입니다.");
         }
 
         List<Comment> commentList = commentRepository.findAllByPost(post);

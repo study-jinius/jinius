@@ -27,7 +27,7 @@ public class AttachmentDownloadResponse {
     // https://developersp.tistory.com/14
     private static String changeUploadName(String uploadName) {
         if (StringUtils.isBlank(uploadName)) {
-            // TODO: 예외처리
+            throw new IllegalArgumentException("저장된 파일의 이름이 비어있어 처리 중 오류가 발생했습니다.");
         }
 
         return new String(uploadName.getBytes(StandardCharsets.UTF_8), StandardCharsets.ISO_8859_1);
