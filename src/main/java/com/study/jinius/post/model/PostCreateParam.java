@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class CreatePostParam {
+public class PostCreateParam {
     private String content;
 
     private Long accountId;

@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class UpdateCommentResponse {
+public class CommentUpdateResponse {
     private Long idx;
     private String content;
     private Long accountId;
@@ -18,8 +18,8 @@ public class UpdateCommentResponse {
     private Status status;
     private Long postIdx;
 
-    public static UpdateCommentResponse from(Comment comment) {
-        UpdateCommentResponse response = new UpdateCommentResponse();
+    public static CommentUpdateResponse from(Comment comment) {
+        CommentUpdateResponse response = new CommentUpdateResponse();
         response.setIdx(comment.getIdx());
         response.setContent(comment.getContent());
         response.setAccountId(comment.getAccountId());

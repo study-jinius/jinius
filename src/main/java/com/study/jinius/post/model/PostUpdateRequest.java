@@ -4,15 +4,15 @@ import com.study.jinius.common.model.Status;
 import lombok.Getter;
 
 @Getter
-public class CreatePostRequest {
+public class PostUpdateRequest {
     private String content;
 
     private Long accountId;
 
     private Status status;
 
-    public CreatePostParam toParam() {
-        CreatePostParam param = new CreatePostParam();
+    public PostUpdateParam toParam() {
+        PostUpdateParam param = new PostUpdateParam();
         param.setContent(this.content);
         param.setAccountId(this.accountId);
         param.setStatus(this.status);

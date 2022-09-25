@@ -5,31 +5,28 @@ import com.study.jinius.post.model.*;
 import com.study.jinius.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class PostService {
     private final PostRepository postRepository;
 
-    public CreatePostResponse createPost(CreatePostParam param) {
+    public PostCreateResponse createPost(PostCreateParam param) {
         Post post = param.toPost();
         Post result = postRepository.save(post);
 
-        return CreatePostResponse.from(result);
+        return PostCreateResponse.from(result);
     }
 
-    public UpdatePostResponse updatePost(Long idx, UpdatePostParam param) {
+    public PostUpdateResponse updatePost(Long idx, PostUpdateParam param) {
         Post post = postRepository.findById(idx).orElseThrow();
 
         post.updatePost(param.getContent(), param.getStatus());
         Post result = postRepository.save(post);
 
-        return UpdatePostResponse.from(result);
+        return PostUpdateResponse.from(result);
     }
 
     public Long deletePost(Long idx) {
