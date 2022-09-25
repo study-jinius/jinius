@@ -18,15 +18,15 @@ public class PostController {
 
     @Operation(summary = "게시물 작성", tags = "PostController")
     @PostMapping
-    public CommonResponse<CreatePostResponse> createPost(@RequestBody CreatePostRequest request) {
-        CreatePostResponse response = postService.createPost(request.toParam());
+    public CommonResponse<PostCreateResponse> createPost(@RequestBody PostCreateRequest request) {
+        PostCreateResponse response = postService.createPost(request.toParam());
         return new CommonResponse<>(HttpStatus.OK, response);
     }
 
     @Operation(summary = "게시물 수정", tags = "PostController")
     @PutMapping("/{idx}")
-    public CommonResponse<UpdatePostResponse> updatePost(@PathVariable Long idx, @RequestBody UpdatePostRequest request) {
-        UpdatePostResponse response = postService.updatePost(idx, request.toParam());
+    public CommonResponse<PostUpdateResponse> updatePost(@PathVariable Long idx, @RequestBody PostUpdateRequest request) {
+        PostUpdateResponse response = postService.updatePost(idx, request.toParam());
         return new CommonResponse<>(HttpStatus.OK, response);
     }
 

@@ -3,10 +3,8 @@ package com.study.jinius.comment.controller;
 import com.study.jinius.comment.model.*;
 import com.study.jinius.comment.service.CommentService;
 import com.study.jinius.common.model.CommonResponse;
-import com.study.jinius.post.model.PostResponse;
-import com.study.jinius.post.model.UpdatePostParam;
-import com.study.jinius.post.model.UpdatePostRequest;
-import com.study.jinius.post.model.UpdatePostResponse;
+import com.study.jinius.post.model.PostUpdateParam;
+import com.study.jinius.post.model.PostUpdateRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,8 +20,8 @@ public class CommentController {
 
     @Operation(summary = "댓글 작성", tags = "CommentController")
     @PostMapping
-    public CommonResponse<CreateCommentResponse> createComment(@RequestBody CreateCommentRequest request) {
-        CreateCommentParam param = request.toParam();
+    public CommonResponse<CreateCommentResponse> createComment(@RequestBody CommentCreateRequest request) {
+        CommentCreateParam param = request.toParam();
         CreateCommentResponse response = commentService.createComment(param);
 
         return new CommonResponse<>(HttpStatus.OK, response);
@@ -31,10 +29,10 @@ public class CommentController {
 
     @Operation(summary = "댓글 수정", tags = "CommentController")
     @PutMapping("/{idx}")
-    public CommonResponse<UpdateCommentResponse> updateComment(@PathVariable Long idx,
-                                                               @RequestBody UpdatePostRequest request) {
-        UpdatePostParam param = request.toParam();
-        UpdateCommentResponse response = commentService.updateComment(idx, param);
+    public CommonResponse<CommentUpdateResponse> updateComment(@PathVariable Long idx,
+                                                               @RequestBody PostUpdateRequest request) {
+        PostUpdateParam param = request.toParam();
+        CommentUpdateResponse response = commentService.updateComment(idx, param);
 
         return new CommonResponse<>(HttpStatus.OK, response);
     }

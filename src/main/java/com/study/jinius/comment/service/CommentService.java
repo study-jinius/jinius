@@ -4,7 +4,7 @@ import com.study.jinius.comment.model.*;
 import com.study.jinius.comment.repository.CommentRepository;
 import com.study.jinius.common.model.Status;
 import com.study.jinius.post.model.Post;
-import com.study.jinius.post.model.UpdatePostParam;
+import com.study.jinius.post.model.PostUpdateParam;
 import com.study.jinius.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ public class CommentService {
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
 
-    public CreateCommentResponse createComment(CreateCommentParam param) {
+    public CreateCommentResponse createComment(CommentCreateParam param) {
         Comment comment = param.toComment();
 
         Post post = postRepository.findById(param.getPostId()).orElseThrow();
@@ -39,7 +39,7 @@ public class CommentService {
 
 
     @Transactional
-    public UpdateCommentResponse updateComment(Long idx, UpdatePostParam param) {
+    public CommentUpdateResponse updateComment(Long idx, PostUpdateParam param) {
         Comment comment = commentRepository.findById(idx).orElseThrow();
         comment.updateComment(param.getContent(), param.getStatus());
 
@@ -49,7 +49,7 @@ public class CommentService {
         }
 
         Comment result = commentRepository.save(comment);
-        return UpdateCommentResponse.from(result);
+        return CommentUpdateResponse.from(result);
     }
 
 

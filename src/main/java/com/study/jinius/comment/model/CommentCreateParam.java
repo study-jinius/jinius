@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class CreateCommentParam {
+public class CommentCreateParam {
     private String content;
 
     private Long accountId;

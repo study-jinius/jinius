@@ -1,34 +1,29 @@
 package com.study.jinius.post.model;
 
 import com.study.jinius.common.model.Status;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-public class CreatePostResponse {
+public class PostUpdateResponse {
     private Long idx;
 
     private String content;
 
     private Long accountId;
 
-    private LocalDateTime createDate;
+    private LocalDateTime updateDate;
 
     private Status status;
 
-    public static CreatePostResponse from(Post post) {
-        CreatePostResponse response = new CreatePostResponse();
+    public static PostUpdateResponse from(Post post) {
+        PostUpdateResponse response = new PostUpdateResponse();
         response.setIdx(post.getIdx());
         response.setContent(post.getContent());
         response.setAccountId(post.getAccountId());
-        response.setCreateDate(post.getCreateDate());
+        response.setUpdateDate(post.getUpdateDate());
         response.setStatus(post.getStatus());
 
         return response;
