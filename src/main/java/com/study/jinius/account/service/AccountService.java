@@ -1,47 +1,50 @@
 package com.study.jinius.account.service;
 
-import com.study.jinius.account.model.Account;
-import com.study.jinius.account.model.AccountCreateParam;
-import com.study.jinius.account.model.AccountCreateResponse;
+import com.study.jinius.account.model.*;
 import com.study.jinius.account.repository.AccountRepository;
+import com.study.jinius.common.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.http.HttpHeaders;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-/**
- * UserDetailsService : 유저의 정보를 가져오는 인터페이스
- */
+
 // TODO: 계층 고민하기
 @Service
 @RequiredArgsConstructor
-public class AccountService implements UserDetailsService {
+public class AccountService {
+    private final JwtTokenProvider jwtTokenProvider;
+    private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
     private final AccountRepository accountRepository;
 
-    public AccountCreateResponse create(AccountCreateParam param) {
+    public AccountSignUpResponse signUp(AccountSignUpParam param) {
         String encodedPassword = passwordEncoder.encode(param.getPassword());
         param.setPassword(encodedPassword);
 
         Account account = param.toAccount();
         Account result = accountRepository.save(account);
 
-        return AccountCreateResponse.from(result);
+        return AccountSignUpResponse.from(result);
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String stringId) throws UsernameNotFoundException {
-        Account account = accountRepository.findByStringId(stringId);
-        if (account == null) return null;
+    public AccountSignInResponse signIn(AccountSignInParam param) {
+        // AuthenticationManager는 authenticate()를 통해 시큐리티에 구현된 인증 절차를 진행한다.
+        Account account = accountRepository.findByStringId(param.getStringId()).orElseThrow();
 
-        // UserDetails를 커스터마이징하는 쪽도 고려해보자.
-        return User.builder()
-                .username(account.getStringId())
-                .password(account.getPassword())
-                .authorities("DEFAULT")
-                .build();
+        if (!passwordEncoder.matches(param.getPassword(), account.getPassword())) {
+            // TODO: 예외처리
+        }
+
+        Authentication authentication
+                = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(param.getStringId(), param.getPassword()));
+
+        String token = jwtTokenProvider.generateToken(authentication);
+        return AccountSignInResponse.from(token);
     }
+
+
 }

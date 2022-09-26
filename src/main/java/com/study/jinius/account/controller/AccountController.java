@@ -1,8 +1,6 @@
 package com.study.jinius.account.controller;
 
-import com.study.jinius.account.model.AccountCreateParam;
-import com.study.jinius.account.model.AccountCreateRequest;
-import com.study.jinius.account.model.AccountCreateResponse;
+import com.study.jinius.account.model.*;
 import com.study.jinius.account.service.AccountService;
 import com.study.jinius.common.model.CommonResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,9 +16,16 @@ public class AccountController {
 
     @Operation(summary = "회원가입", tags = "AccountController")
     @PostMapping("sign-up")
-    public CommonResponse<AccountCreateResponse> create(@RequestBody AccountCreateRequest request) {
-        AccountCreateParam param = request.toParam();
-        AccountCreateResponse response = accountService.create(param);
+    public CommonResponse<AccountSignUpResponse> signUp(@RequestBody AccountCreateRequest request) {
+        AccountSignUpParam param = request.toParam();
+        AccountSignUpResponse response = accountService.signUp(param);
+        return new CommonResponse<>(HttpStatus.OK, response);
+    }
+
+    @GetMapping("sign-in")
+    public CommonResponse<AccountSignInResponse> signIn(@ModelAttribute AccountSignInRequest request) {
+        AccountSignInParam param = request.toParam();
+        AccountSignInResponse response = accountService.signIn(param);
         return new CommonResponse<>(HttpStatus.OK, response);
     }
 }
