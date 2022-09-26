@@ -5,12 +5,12 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class AccountCreateResponse {
+public class AccountSignUpResponse {
     private String stringId;
     private String name;
 
-    public static AccountCreateResponse from(Account account) {
-        AccountCreateResponse response = new AccountCreateResponse();
+    public static AccountSignUpResponse from(Account account) {
+        AccountSignUpResponse response = new AccountSignUpResponse();
         response.setStringId(account.getStringId());
         response.setName(account.getName());
 

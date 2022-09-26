@@ -8,8 +8,8 @@ public class AccountCreateRequest {
     private String password;
     private String name;
 
-    public AccountCreateParam toParam() {
-        AccountCreateParam param = new AccountCreateParam();
+    public AccountSignUpParam toParam() {
+        AccountSignUpParam param = new AccountSignUpParam();
         param.setStringId(stringId);
         param.setPassword(password);
         param.setName(name);
