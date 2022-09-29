@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -13,29 +14,40 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
-@RequiredArgsConstructor
 @EnableWebSecurity // 웹 보안 활성화를 위한 annotation
+@RequiredArgsConstructor
+@EnableGlobalMethodSecurity(prePostEnabled = true) // @PreAuthorize 어노테이션을 메소드 단위로 추가하기 위해 적용
 public class SecurityConfig {
     // WebSecurityConfigureAdapter Deprecated
     private final JwtTokenProvider jwtTokenProvider;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         // 스프링 시큐리티 설정
         // http 요청에 대한 웹 기반 보안 구성
-        http.csrf().disable()
-                .authorizeRequests()
-                .antMatchers("/swagger-ui/**", "/api-docs/**", "/api/accounts/**").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .formLogin();
-
-        // JWT를 쓰려면 Spring Security에서 기본적으로 지원하는 Session 설정을 해제해야 한다.
         http
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .csrf().disable()
 
-        // JWT 적용
-        http.apply(new JwtSecurityConfig(jwtTokenProvider));
+                .exceptionHandling()
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                .accessDeniedHandler(jwtAccessDeniedHandler)
+
+                .and()
+                .authorizeRequests()
+                .antMatchers("/swagger-ui/**", "/api-docs/**").permitAll()
+                .antMatchers("/api/accounts/**").permitAll()
+                .anyRequest().authenticated()
+
+                // JWT를 쓰려면 Spring Security에서 기본적으로 지원하는 Session 설정을 해제해야 한다.
+                .and()
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+
+                // JWT 적용
+                .and()
+                .apply(new JwtSecurityConfig(jwtTokenProvider));
 
         return http.build();
     }
