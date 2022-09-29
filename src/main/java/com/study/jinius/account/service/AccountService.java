@@ -2,12 +2,13 @@ package com.study.jinius.account.service;
 
 import com.study.jinius.account.model.*;
 import com.study.jinius.account.repository.AccountRepository;
+import com.study.jinius.common.exception.AlreadyExistsException;
 import com.study.jinius.common.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,10 @@ public class AccountService {
     private final AccountRepository accountRepository;
 
     public AccountSignUpResponse signUp(AccountSignUpParam param) {
+        if (accountRepository.findByStringId(param.getStringId()).orElse(null) != null) {
+            throw new AlreadyExistsException("이미 존재하는 회원입니다.");
+        }
+
         String encodedPassword = passwordEncoder.encode(param.getPassword());
         param.setPassword(encodedPassword);
 
@@ -32,19 +37,17 @@ public class AccountService {
     }
 
     public AccountSignInResponse signIn(AccountSignInParam param) {
-        // AuthenticationManager는 authenticate()를 통해 시큐리티에 구현된 인증 절차를 진행한다.
-        Account account = accountRepository.findByStringId(param.getStringId()).orElseThrow();
+        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken
+                = new UsernamePasswordAuthenticationToken(param.getStringId(), param.getPassword());
 
-        if (!passwordEncoder.matches(param.getPassword(), account.getPassword())) {
-            // TODO: 예외처리
-        }
-
+        // 이 시점에 loadUserByUsername 메소드가 실행된다.
         Authentication authentication
-                = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(param.getStringId(), param.getPassword()));
+                = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
+
+        // 생성된 Authentication 객체는 SecurityContext에 저장된다.
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         String token = jwtTokenProvider.generateToken(authentication);
         return AccountSignInResponse.from(token);
     }
-
-
 }

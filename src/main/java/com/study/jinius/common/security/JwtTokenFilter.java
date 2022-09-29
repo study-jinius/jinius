@@ -1,5 +1,6 @@
 package com.study.jinius.common.security;
 
+import com.study.jinius.common.exception.UnknownException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -13,6 +14,7 @@ import java.io.IOException;
 
 /**
  * Request마다 1회만 실행되는 필터
+ * 서버에서 읽고 유효한 토큰인지 판단
  */
 public class JwtTokenFilter extends OncePerRequestFilter {
     private JwtTokenProvider jwtTokenProvider;
@@ -30,15 +32,13 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         String token = jwtTokenProvider.resolveToken(request);
         try {
             if (token != null && jwtTokenProvider.validateToken(token)) {
-                Authentication auth = jwtTokenProvider.getAuthentication(token);
+                Authentication authentication = jwtTokenProvider.getAuthentication(token);
                 // 정상 토큰이면 토큰을 통해 생성한 Authentication 객체(한 유저의 인증 정보를 가지고 있음)를 SecurityContext에 저장
-                // FIXME: 이렇게 되면 헤더에 토큰 포함해서 보낼 때마다 DB 거치게 될 것이다...
-                SecurityContextHolder.getContext().setAuthentication(auth);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (Exception e) {
             SecurityContextHolder.clearContext();
-            // TODO: 예외처리
-            return;
+            throw new UnknownException("토큰 검사 중 예외가 발생했습니다.", e);
         }
 
         filterChain.doFilter(request, response); // 다음 필터 체인 실행

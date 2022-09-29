@@ -1,6 +1,7 @@
 package com.study.jinius.account.service;
 
 import com.study.jinius.account.model.Account;
+import com.study.jinius.account.model.Role;
 import com.study.jinius.account.repository.AccountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.User;
@@ -19,12 +20,19 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String stringId) throws UsernameNotFoundException {
-        Account account = accountRepository.findByStringId(stringId).orElseThrow();
+        Account account = accountRepository.findByStringId(stringId)
+                .filter(this::isValid)
+                .orElseThrow(() -> new UsernameNotFoundException(String.format("%s는 존재하지 않는 사용자입니다.", stringId)));
 
         return User.builder()
                 .username(account.getStringId())
                 .password(account.getPassword())
                 .authorities(account.getRole().name())
                 .build();
+    }
+
+    private boolean isValid(Account account) {
+        if (account == null) return false;
+        return account.getRole() != null && !Role.NONE.equals(account.getRole());
     }
 }
