@@ -42,10 +42,12 @@ public class SecurityConfig {
 
                 // JWT를 쓰려면 Spring Security에서 기본적으로 지원하는 Session 설정을 해제해야 한다.
                 .and()
+                .logout().disable()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
                 // JWT 적용
+                // jwtTokenProvider 안에 custom한 filter가 적용되어 있다.
                 .and()
                 .apply(new JwtSecurityConfig(jwtTokenProvider));
 
@@ -70,7 +72,7 @@ public class SecurityConfig {
 //        converter.setSigningKey("TEMP_KEY");
 //        converter.afterPropertiesSet();
 //        return converter;
-//    }
+//    }1
 
 //    @Bean
 //    public WebSecurityCustomizer webSecurityCustomizer() {
