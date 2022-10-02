@@ -16,7 +16,7 @@ public class AccountController {
     private final AccountService accountService;
 
     @Operation(summary = "회원가입", tags = "AccountController")
-    @PostMapping("sign-up")
+    @PostMapping("/sign-up")
     public ResponseEntity<AccountSignUpResponse> signUp(@RequestBody AccountCreateRequest request) {
         AccountSignUpParam param = request.toParam();
         AccountSignUpResponse response = accountService.signUp(param);
@@ -24,13 +24,24 @@ public class AccountController {
     }
 
     @Operation(summary = "로그인", tags = "AccountController")
-    @GetMapping("sign-in")
-    public ResponseEntity<AccountSignInResponse> signIn(@ModelAttribute AccountSignInRequest request) {
+    @PostMapping("/sign-in")
+    public ResponseEntity<AccountSignInResponse> signIn(@RequestBody AccountSignInRequest request) {
         AccountSignInParam param = request.toParam();
         AccountSignInResponse response = accountService.signIn(param);
 
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add(HttpHeaders.AUTHORIZATION, "Bearer " + response.getToken());
+        httpHeaders.add(HttpHeaders.AUTHORIZATION, "Bearer " + response.getAccessToken());
+        return new ResponseEntity<>(response, httpHeaders, HttpStatus.OK);
+    }
+
+    @Operation(summary = "Access Token 재발급", tags = "AccountController")
+    @PostMapping("/refresh")
+    public ResponseEntity<AccountRefreshResponse> refresh(@RequestBody AccountRefreshRequest request) {
+        AccountRefreshCond cond = request.toCond();
+        AccountRefreshResponse response = accountService.refresh(cond);
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add(HttpHeaders.AUTHORIZATION, "Bearer " + response.getAccessToken());
         return new ResponseEntity<>(response, httpHeaders, HttpStatus.OK);
     }
 }
