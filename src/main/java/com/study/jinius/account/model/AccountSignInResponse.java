@@ -1,17 +1,17 @@
 package com.study.jinius.account.model;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.study.jinius.common.security.JwtToken;
+import lombok.*;
 
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class AccountSignInResponse {
-    private String token;
+    private String accessToken;
+    private String refreshToken;
 
-    public static AccountSignInResponse from(String token) {
-        return new AccountSignInResponse(token);
+    public static AccountSignInResponse from(JwtToken token) {
+        return new AccountSignInResponse(token.getAccess(), token.getRefresh());
     }
 }

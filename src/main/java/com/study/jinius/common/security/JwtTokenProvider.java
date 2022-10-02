@@ -1,7 +1,6 @@
 package com.study.jinius.common.security;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +9,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,22 +21,24 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class JwtTokenProvider {
     private String secretKey = "SECRET_KEY";
-    private Long expireTime = 1000 * 60 * 120L;
+    private final Long accessTokenExpiredTime = 1000 * 60 * 120L;
+    private final Long refreshTokenExpiredTime = 1000 * 60 * 120L;
 
     private final UserDetailsService userDetailsService;
 
-    public String generateToken(Authentication authentication) {
-        Claims claims = Jwts.claims().setSubject(authentication.getName());
+    public JwtToken generateToken(Authentication authentication) {
+        String username = authentication.getName();
+        String refreshToken = getRefreshToken(username);
+        String accessToken = getAccessToken(username);
 
-        Date now = new Date();
-        Date expiresIn = new Date(now.getTime() + expireTime);
+        return new JwtToken(accessToken, refreshToken);
+    }
 
-        return Jwts.builder()
-                .setClaims(claims)
-                .setIssuedAt(now)
-                .setExpiration(expiresIn)
-                .signWith(SignatureAlgorithm.HS256, secretKey)
-                .compact();
+    public JwtToken reIssueToken(String refreshToken) {
+        String username = getUsernameFromToken(refreshToken);
+        String accessToken = getRefreshToken(username);
+
+        return new JwtToken(accessToken);
     }
 
     /**
@@ -48,7 +48,7 @@ public class JwtTokenProvider {
      * @return
      */
     public Authentication getAuthentication(String token) {
-        String username = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
+        String username = getUsernameFromToken(token);
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
         return new UsernamePasswordAuthenticationToken(userDetails, token, userDetails.getAuthorities());
@@ -73,17 +73,44 @@ public class JwtTokenProvider {
      * 토큰을 검증
      *
      * @param token
-     * @return
      */
-    public boolean validateToken(String token) {
-        try {
-            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
-            return true;
-        } catch (ExpiredJwtException e) {
-            return false;
-        } catch (JwtException e) {
-            // 예외처리
-            return false;
-        }
+    public void validateToken(String token) {
+        Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+    }
+
+    /**
+     * 토큰으로부터 사용자 아이디 가져옴
+     *
+     * @param token
+     */
+    public String getUsernameFromToken(String token) {
+        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
+    }
+
+    private String getRefreshToken(String username) {
+        Claims claims = Jwts.claims().setSubject(username);
+        Date now = new Date();
+        Date refreshExp = new Date(now.getTime() + refreshTokenExpiredTime);
+
+        String refreshToken = Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(now)
+                .setExpiration(refreshExp)
+                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .compact();
+        return refreshToken;
+    }
+
+    private String getAccessToken(String username) {
+        Claims claims = Jwts.claims().setSubject(username);
+        Date now = new Date();
+        Date accessExp = new Date(now.getTime() + accessTokenExpiredTime);
+
+        return Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(now)
+                .setExpiration(accessExp)
+                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .compact();
     }
 }

@@ -20,19 +20,15 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String stringId) throws UsernameNotFoundException {
+        // 내부적으로 provider에서 hideUserNotFoundException의 기본값은 false이기 때문에 메시지가 의미없다.
         Account account = accountRepository.findByStringId(stringId)
-                .filter(this::isValid)
-                .orElseThrow(() -> new UsernameNotFoundException(String.format("%s는 존재하지 않는 사용자입니다.", stringId)));
+                .filter(a -> !Role.NONE.equals(a.getRole()))
+                .orElseThrow(() -> new UsernameNotFoundException(null));
 
         return User.builder()
                 .username(account.getStringId())
                 .password(account.getPassword())
                 .authorities(account.getRole().name())
                 .build();
-    }
-
-    private boolean isValid(Account account) {
-        if (account == null) return false;
-        return account.getRole() != null && !Role.NONE.equals(account.getRole());
     }
 }
