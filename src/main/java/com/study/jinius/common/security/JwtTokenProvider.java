@@ -3,6 +3,7 @@ package com.study.jinius.common.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,8 +22,9 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class JwtTokenProvider {
     private String secretKey = "SECRET_KEY";
-    private final Long accessTokenExpiredTime = 1000 * 60 * 120L;
-    private final Long refreshTokenExpiredTime = 1000 * 60 * 120L;
+
+    public static final Long ACCESS_TOKEN_EXPIRED_TIME = 30 * 60 * 1000L; // 30분
+    public static final Long REFRESH_TOKEN_EXPIRED_TIME = 14 * 24 * 60 * 60 * 1000L; // 2주
 
     private final UserDetailsService userDetailsService;
 
@@ -90,7 +92,7 @@ public class JwtTokenProvider {
     private String getRefreshToken(String username) {
         Claims claims = Jwts.claims().setSubject(username);
         Date now = new Date();
-        Date refreshExp = new Date(now.getTime() + refreshTokenExpiredTime);
+        Date refreshExp = new Date(now.getTime() );
 
         String refreshToken = Jwts.builder()
                 .setClaims(claims)
@@ -104,7 +106,7 @@ public class JwtTokenProvider {
     private String getAccessToken(String username) {
         Claims claims = Jwts.claims().setSubject(username);
         Date now = new Date();
-        Date accessExp = new Date(now.getTime() + accessTokenExpiredTime);
+        Date accessExp = new Date(now.getTime() + ACCESS_TOKEN_EXPIRED_TIME);
 
         return Jwts.builder()
                 .setClaims(claims)
