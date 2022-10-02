@@ -1,5 +1,6 @@
 package com.study.jinius.common.security;
 
+import com.nimbusds.jose.shaded.json.JSONObject;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -14,9 +15,18 @@ import java.io.IOException;
 @Component
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
-    public void commence(HttpServletRequest request,
+    public void commence(HttpServletRequest requesq,
                          HttpServletResponse response,
-                         AuthenticationException authException) throws IOException {
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+                         AuthenticationException e) throws IOException {
+        setResponse(response, e.getMessage());
+    }
+
+    private void setResponse(HttpServletResponse response, String message) throws IOException {
+        response.setContentType("application/json;charset=UTF-8");
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        JSONObject responseJson = new JSONObject();
+        responseJson.put("message", message);
+
+        response.getWriter().print(responseJson);
     }
 }
