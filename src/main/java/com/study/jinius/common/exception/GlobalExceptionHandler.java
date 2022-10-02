@@ -1,31 +1,31 @@
 package com.study.jinius.common.exception;
 
-import com.study.jinius.common.model.CommonResponse;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.apache.tomcat.websocket.AuthenticationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(value = IllegalArgumentException.class)
-    public CommonResponse<String> handleIllegalArgumentException(IllegalArgumentException e) {
-        return new CommonResponse<>(HttpStatus.BAD_REQUEST, e.getMessage());
+    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(value = AlreadyExistsException.class)
-    public CommonResponse<String> handleAlreadyExistsException(AlreadyExistsException e) {
-        return new CommonResponse<>(HttpStatus.BAD_REQUEST, e.getMessage());
+    public ResponseEntity<String> handleAlreadyExistsException(AlreadyExistsException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(value = AuthenticationException.class)
-    public CommonResponse<String> handleAuthenticationException(AuthenticationException e) {
-        return new CommonResponse<>(HttpStatus.BAD_REQUEST, e.getMessage());
+    public ResponseEntity<String> handleAuthenticationException(AuthenticationException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(value = ExpiredJwtException.class)
-    public CommonResponse<String> handleExpiredJwtException(ExpiredJwtException e) {
-        return new CommonResponse<>(HttpStatus.UNAUTHORIZED, e.getMessage());
+    public ResponseEntity<String> handleExpiredJwtException(ExpiredJwtException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 }

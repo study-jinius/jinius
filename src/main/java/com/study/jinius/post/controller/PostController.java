@@ -1,11 +1,11 @@
 package com.study.jinius.post.controller;
 
-import com.study.jinius.common.model.CommonResponse;
 import com.study.jinius.post.model.*;
 import com.study.jinius.post.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,29 +18,29 @@ public class PostController {
 
     @Operation(summary = "게시물 작성", tags = "PostController")
     @PostMapping
-    public CommonResponse<PostCreateResponse> createPost(@RequestBody PostCreateRequest request) {
+    public ResponseEntity<PostCreateResponse> createPost(@RequestBody PostCreateRequest request) {
         PostCreateResponse response = postService.createPost(request.toParam());
-        return new CommonResponse<>(HttpStatus.OK, response);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @Operation(summary = "게시물 수정", tags = "PostController")
     @PutMapping("/{idx}")
-    public CommonResponse<PostUpdateResponse> updatePost(@PathVariable Long idx, @RequestBody PostUpdateRequest request) {
+    public ResponseEntity<PostUpdateResponse> updatePost(@PathVariable Long idx, @RequestBody PostUpdateRequest request) {
         PostUpdateResponse response = postService.updatePost(idx, request.toParam());
-        return new CommonResponse<>(HttpStatus.OK, response);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @Operation(summary = "게시물 삭제", tags = "PostController")
     @DeleteMapping("/{idx}")
-    public CommonResponse<Long> deletePost(@PathVariable Long idx) {
+    public ResponseEntity<Long> deletePost(@PathVariable Long idx) {
         Long deletedPostIdx = postService.deletePost(idx);
-        return new CommonResponse<>(HttpStatus.OK, deletedPostIdx);
+        return new ResponseEntity<>(deletedPostIdx, HttpStatus.OK);
     }
 
     @Operation(summary = "게시물 리스트 조회", tags = "PostController")
     @GetMapping("/list")
-    public CommonResponse<List<PostResponse>> getList() {
+    public ResponseEntity<List<PostResponse>> getList() {
         List<PostResponse> responseList = postService.getList();
-        return new CommonResponse<>(HttpStatus.OK, responseList);
+        return new ResponseEntity<>(responseList, HttpStatus.OK);
     }
 }

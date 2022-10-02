@@ -4,7 +4,6 @@ import com.study.jinius.attachment.exception.UnsupportedFileException;
 import com.study.jinius.attachment.model.AttachmentDownloadResponse;
 import com.study.jinius.attachment.model.AttachmentUploadResponse;
 import com.study.jinius.attachment.service.AttachmentService;
-import com.study.jinius.common.model.CommonResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
@@ -27,12 +26,12 @@ public class AttachmentController {
 
     @Operation(summary = "파일 업로드", tags = "AttachmentController")
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public CommonResponse<List<AttachmentUploadResponse>> upload(@RequestParam(required = false) MultipartFile[] files) {
+    public ResponseEntity<List<AttachmentUploadResponse>> upload(@RequestParam(required = false) MultipartFile[] files) {
         try {
             List<AttachmentUploadResponse> responseList = attachmentService.upload(files);
-            return new CommonResponse<>(HttpStatus.OK, responseList);
+            return new ResponseEntity<>(responseList, HttpStatus.OK);
         } catch (IOException e) {
-            return new CommonResponse<>(HttpStatus.BAD_REQUEST, null);
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -54,7 +53,7 @@ public class AttachmentController {
     }
 
     @ExceptionHandler(value = UnsupportedFileException.class)
-    public CommonResponse<String> handleUnsupportedFileException(UnsupportedFileException e) {
-        return new CommonResponse<>(HttpStatus.BAD_REQUEST, e.getMessage());
+    public ResponseEntity<String> handleUnsupportedFileException(UnsupportedFileException e) {
+        return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 }
