@@ -22,7 +22,6 @@ public class AccountService {
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
     private final AccountRepository accountRepository;
-    private final StatefulRedisConnection<String, String> statefulRedisConnection;
     private RedisCommands<String, String> commands;
 
     public AccountService(JwtTokenProvider jwtTokenProvider,
@@ -34,8 +33,7 @@ public class AccountService {
         this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
         this.accountRepository = accountRepository;
-        this.statefulRedisConnection = statefulRedisConnection;
-        this.commands = this.statefulRedisConnection.sync();
+        this.commands = statefulRedisConnection.sync();
     }
 
 
@@ -66,7 +64,7 @@ public class AccountService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         JwtToken token = jwtTokenProvider.generateToken(authentication);
-        commands.set(param.getStringId(), token.getRefresh());
+        commands.setex(param.getStringId(), JwtTokenProvider.REFRESH_TOKEN_EXPIRED_TIME, token.getRefresh());
         return AccountSignInResponse.from(token);
     }
 

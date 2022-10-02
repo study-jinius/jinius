@@ -1,6 +1,7 @@
 package com.study.jinius.common.exception;
 
 import com.study.jinius.common.model.CommonResponse;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.apache.tomcat.websocket.AuthenticationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -21,5 +22,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = AuthenticationException.class)
     public CommonResponse<String> handleAuthenticationException(AuthenticationException e) {
         return new CommonResponse<>(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
+
+    @ExceptionHandler(value = ExpiredJwtException.class)
+    public CommonResponse<String> handleExpiredJwtException(ExpiredJwtException e) {
+        return new CommonResponse<>(HttpStatus.UNAUTHORIZED, e.getMessage());
     }
 }
