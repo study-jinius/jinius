@@ -22,7 +22,7 @@ public class PostUpdateResponse {
         PostUpdateResponse response = new PostUpdateResponse();
         response.setIdx(post.getIdx());
         response.setContent(post.getContent());
-        response.setAccountId(post.getAccountId());
+        response.setAccountId(post.getAccount().getIdx());
         response.setUpdateDate(post.getUpdateDate());
         response.setStatus(post.getStatus());
 

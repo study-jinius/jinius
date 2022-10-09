@@ -19,7 +19,7 @@ public class CommentResponse {
         CommentResponse response = new CommentResponse();
         response.setIdx(comment.getIdx());
         response.setContent(comment.getContent());
-        response.setAccountId(comment.getAccountId());
+        response.setAccountId(comment.getAccount().getIdx());
         response.setCreateDate(comment.getCreateDate());
         response.setUpdateDate(comment.getUpdateDate());
         response.setParentId(comment.getParent() != null ? comment.getParent().getIdx() : null);

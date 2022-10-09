@@ -1,5 +1,6 @@
 package com.study.jinius.post.model;
 
+import com.study.jinius.account.model.Account;
 import com.study.jinius.comment.model.Comment;
 import com.study.jinius.common.model.BaseEntity;
 import com.study.jinius.common.model.Status;
@@ -23,8 +24,9 @@ public class Post extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    @Column(nullable = false)
-    private Long accountId;
+    @ManyToOne
+    @JoinColumn(name = "ACCOUNT_ID")
+    private Account account;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 30)
@@ -33,11 +35,11 @@ public class Post extends BaseEntity {
     @OneToMany(mappedBy = "post")
     private List<Comment> commentList = new ArrayList<>();
 
-    public Post(String content,
-                Long accountId,
-                Status status) {
+    public Post(Status status,
+                String content,
+                Account account) {
         this.content = content;
-        this.accountId = accountId;
+        this.account = account;
         this.status = status;
     }
 

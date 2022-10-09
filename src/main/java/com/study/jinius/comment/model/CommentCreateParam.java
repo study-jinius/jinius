@@ -1,5 +1,6 @@
 package com.study.jinius.comment.model;
 
+import com.study.jinius.account.model.Account;
 import com.study.jinius.common.model.Status;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,10 +20,10 @@ public class CommentCreateParam {
 
     private Status status;
 
-    public Comment toComment() {
+    public Comment toComment(Account account) {
         return new Comment(
+                account,
                 this.content,
-                this.accountId,
                 this.status);
     }
 }

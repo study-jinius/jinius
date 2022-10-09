@@ -1,5 +1,6 @@
 package com.study.jinius.comment.model;
 
+import com.study.jinius.account.model.Account;
 import com.study.jinius.common.model.BaseEntity;
 import com.study.jinius.common.model.Status;
 import com.study.jinius.post.model.Post;
@@ -22,8 +23,9 @@ public class Comment extends BaseEntity {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
-    @Column(nullable = false)
-    private Long accountId;
+    @ManyToOne
+    @JoinColumn(name = "ACCOUNT_ID")
+    private Account account;
 
     @ManyToOne
     @JoinColumn(name = "PARENT_IDX")
@@ -40,11 +42,11 @@ public class Comment extends BaseEntity {
     @JoinColumn(name = "POST_IDX")
     private Post post;
 
-    public Comment(String content,
-                   Long accountId,
+    public Comment(Account account,
+                   String content,
                    Status status) {
+        this.account = account;
         this.content = content;
-        this.accountId = accountId;
         this.status = status;
     }
 

@@ -18,7 +18,7 @@ public class PostResponse {
         PostResponse response = new PostResponse();
         response.setIdx(post.getIdx());
         response.setContent(post.getContent());
-        response.setAccountId(post.getAccountId());
+        response.setAccountId(post.getAccount().getIdx());
         response.setCreateDate(post.getCreateDate());
         response.setUpdateDate(post.getUpdateDate());
 
