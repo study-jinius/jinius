@@ -20,13 +20,14 @@ public class Post extends BaseEntity {
     @GeneratedValue
     private Long idx;
 
+    @Column(columnDefinition = "TEXT")
     private String content;
 
     @Column(nullable = false)
     private Long accountId;
 
-    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 30)
     private Status status;
 
     @OneToMany(mappedBy = "post")
