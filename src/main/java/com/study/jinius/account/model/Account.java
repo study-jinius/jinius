@@ -1,5 +1,6 @@
 package com.study.jinius.account.model;
 
+import com.study.jinius.common.model.BaseEntity;
 import com.study.jinius.common.model.Status;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Account {
+public class Account extends BaseEntity {
     @Id
     @GeneratedValue
     private Long idx;
@@ -23,8 +24,6 @@ public class Account {
 
     private String name;
 
-    private LocalDateTime createDate;
-
     private LocalDateTime lastSignedInDate;
 
     @Enumerated(value = EnumType.STRING)
@@ -34,7 +33,6 @@ public class Account {
         this.stringId = stringId;
         this.password = password;
         this.name = name;
-        this.createDate = LocalDateTime.now();
         this.role = Role.USER;
     }
 }

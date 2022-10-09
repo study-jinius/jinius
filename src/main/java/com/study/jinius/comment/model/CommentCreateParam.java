@@ -23,8 +23,6 @@ public class CommentCreateParam {
         return new Comment(
                 this.content,
                 this.accountId,
-                LocalDateTime.now(),
-                null,
                 this.status);
     }
 }

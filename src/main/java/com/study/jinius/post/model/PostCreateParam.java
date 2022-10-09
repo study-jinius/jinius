@@ -19,8 +19,6 @@ public class PostCreateParam {
         return new Post(
                 this.content,
                 this.accountId,
-                LocalDateTime.now(),
-                null,
                 this.status);
     }
 }
