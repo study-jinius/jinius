@@ -1,6 +1,7 @@
 package com.study.jinius.post.model;
 
 import com.study.jinius.comment.model.Comment;
+import com.study.jinius.common.model.BaseEntity;
 import com.study.jinius.common.model.Status;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -14,7 +15,7 @@ import java.util.List;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Post {
+public class Post extends BaseEntity {
     @Id
     @GeneratedValue
     private Long idx;
@@ -23,10 +24,6 @@ public class Post {
 
     @Column(nullable = false)
     private Long accountId;
-
-    private LocalDateTime createDate;
-
-    private LocalDateTime updateDate;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -37,13 +34,9 @@ public class Post {
 
     public Post(String content,
                 Long accountId,
-                LocalDateTime createDate,
-                LocalDateTime updateDate,
                 Status status) {
         this.content = content;
         this.accountId = accountId;
-        this.createDate = createDate;
-        this.updateDate = updateDate;
         this.status = status;
     }
 
