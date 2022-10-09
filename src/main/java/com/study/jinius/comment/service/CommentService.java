@@ -1,7 +1,10 @@
 package com.study.jinius.comment.service;
 
+import com.study.jinius.account.model.Account;
+import com.study.jinius.account.repository.AccountRepository;
 import com.study.jinius.comment.model.*;
 import com.study.jinius.comment.repository.CommentRepository;
+import com.study.jinius.common.exception.NotFoundException;
 import com.study.jinius.common.model.Status;
 import com.study.jinius.post.model.Post;
 import com.study.jinius.post.model.PostUpdateParam;
@@ -17,11 +20,15 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class CommentService {
+    private final AccountRepository accountRepository;
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
 
     public CreateCommentResponse createComment(CommentCreateParam param) {
-        Comment comment = param.toComment();
+        Account account = accountRepository.findById(param.getAccountId())
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 사용자입니다."));
+
+        Comment comment = param.toComment(account);
 
         Post post = postRepository.findById(param.getPostId()).orElseThrow();
         post.addComment(comment);
@@ -45,7 +52,7 @@ public class CommentService {
 
         Post post = comment.getPost();
         if (Status.DELETED.equals(post.getStatus())) {
-            throw new IllegalArgumentException("삭제된 게시물입니다.");
+            throw new NotFoundException("삭제된 게시물입니다.");
         }
 
         Comment result = commentRepository.save(comment);
@@ -65,7 +72,7 @@ public class CommentService {
         Post post = postRepository.findById(postIdx).orElseThrow();
 
         if (Status.DELETED.equals(post.getStatus())) {
-            throw new IllegalArgumentException("삭제된 게시물입니다.");
+            throw new NotFoundException("삭제된 게시물입니다.");
         }
 
         List<Comment> commentList = commentRepository.findAllByPost(post);

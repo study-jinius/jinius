@@ -1,7 +1,9 @@
 package com.study.jinius.account.model;
 
+import com.study.jinius.comment.model.Comment;
 import com.study.jinius.common.model.BaseEntity;
 import com.study.jinius.common.model.Status;
+import com.study.jinius.post.model.Post;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,6 +13,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -37,6 +40,11 @@ public class Account extends BaseEntity {
     @Column(nullable = false, length = 30)
     private Role role;
 
+    @OneToMany(mappedBy = "account")
+    private List<Comment> commentList;
+
+    @OneToMany(mappedBy = "account")
+    private List<Post> postList;
     public Account(String stringId, String password, String name) {
         this.stringId = stringId;
         this.password = password;

@@ -21,7 +21,7 @@ public class CreateCommentResponse {
         CreateCommentResponse response = new CreateCommentResponse();
         response.setIdx(comment.getIdx());
         response.setContent(comment.getContent());
-        response.setAccountId(comment.getAccountId());
+        response.setAccountId(comment.getAccount().getIdx());
         response.setParentIdx(comment.getParent() != null ? comment.getParent().getIdx() : null);
         response.setCreateDate(comment.getCreateDate());
         response.setStatus(comment.getStatus());

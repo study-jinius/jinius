@@ -1,10 +1,9 @@
 package com.study.jinius.post.model;
 
+import com.study.jinius.account.model.Account;
 import com.study.jinius.common.model.Status;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -15,10 +14,11 @@ public class PostCreateParam {
 
     private Status status;
 
-    public Post toPost() {
+    public Post toPost(Account account) {
         return new Post(
+                this.status,
                 this.content,
-                this.accountId,
-                this.status);
+                account
+        );
     }
 }

@@ -1,5 +1,8 @@
 package com.study.jinius.post.service;
 
+import com.study.jinius.account.model.Account;
+import com.study.jinius.account.repository.AccountRepository;
+import com.study.jinius.common.exception.NotFoundException;
 import com.study.jinius.common.model.Status;
 import com.study.jinius.post.model.*;
 import com.study.jinius.post.repository.PostRepository;
@@ -11,10 +14,14 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class PostService {
+    private final AccountRepository accountRepository;
     private final PostRepository postRepository;
 
     public PostCreateResponse createPost(PostCreateParam param) {
-        Post post = param.toPost();
+        Account account = accountRepository.findById(param.getAccountId())
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 사용자입니다."));
+
+        Post post = param.toPost(account);
         Post result = postRepository.save(post);
 
         return PostCreateResponse.from(result);
