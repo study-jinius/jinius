@@ -28,10 +28,9 @@ public class JwtTokenProvider {
 
     private final UserDetailsService userDetailsService;
 
-    public JwtToken generateToken(Authentication authentication) {
-        String username = authentication.getName();
-        String refreshToken = getRefreshToken(username);
-        String accessToken = getAccessToken(username);
+    public JwtToken generateToken(String accountIdx) {
+        String refreshToken = getRefreshToken(accountIdx);
+        String accessToken = getAccessToken(accountIdx);
 
         return new JwtToken(accessToken, refreshToken);
     }
