@@ -7,8 +7,6 @@ import lombok.Getter;
 public class CommentCreateRequest {
     private String content;
 
-    private Long accountId;
-
     private Long parentId;
 
     private Long postId;
@@ -18,7 +16,6 @@ public class CommentCreateRequest {
     public CommentCreateParam toParam() {
         CommentCreateParam param = new CommentCreateParam();
         param.setContent(this.content);
-        param.setAccountId(this.accountId);
         param.setParentId(this.parentId);
         param.setPostId(this.postId);
         param.setStatus(this.status);
