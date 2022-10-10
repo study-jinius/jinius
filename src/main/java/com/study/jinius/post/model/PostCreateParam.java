@@ -10,8 +10,6 @@ import lombok.Setter;
 public class PostCreateParam {
     private String content;
 
-    private Long accountId;
-
     private Status status;
 
     public Post toPost(Account account) {
