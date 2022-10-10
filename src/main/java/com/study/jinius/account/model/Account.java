@@ -51,4 +51,8 @@ public class Account extends BaseEntity {
         this.name = name;
         this.role = Role.USER;
     }
+
+    public boolean isValidAccount() {
+        return this.role != Role.NONE;
+    }
 }

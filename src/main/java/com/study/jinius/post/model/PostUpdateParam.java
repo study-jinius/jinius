@@ -9,7 +9,5 @@ import lombok.Setter;
 public class PostUpdateParam {
     private String content;
 
-    private Long accountId;
-
     private Status status;
 }
