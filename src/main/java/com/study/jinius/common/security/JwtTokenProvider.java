@@ -92,7 +92,7 @@ public class JwtTokenProvider {
     private String getRefreshToken(String username) {
         Claims claims = Jwts.claims().setSubject(username);
         Date now = new Date();
-        Date refreshExp = new Date(now.getTime() );
+        Date refreshExp = new Date(now.getTime() + REFRESH_TOKEN_EXPIRED_TIME);
 
         String refreshToken = Jwts.builder()
                 .setClaims(claims)
