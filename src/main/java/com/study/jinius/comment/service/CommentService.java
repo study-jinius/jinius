@@ -31,19 +31,20 @@ public class CommentService {
     @Transactional
     public CreateCommentResponse createComment(CommentCreateParam param) {
         Long accountId = customUserDetailsService.getAccountIdx();
-        Account account = accountRepository.findById(accountId)
-                .filter(Account::isValidAccount)
-                .orElseThrow(() -> new NotFoundException("존재하지 않는 사용자입니다."));
-
+        Account account = getValidAccount(accountId);
         Comment comment = param.toComment(account);
 
-        Post post = postRepository.findById(param.getPostId()).orElseThrow();
+        Post post = postRepository.findById(param.getPostId())
+                .filter(Post::exists)
+                .orElseThrow(() -> new NotFoundException("존재하지 않는 게시물입니다."));
         post.addComment(comment);
         comment.setPost(post);
 
         Long parentId = param.getParentId();
         if (parentId != null) {
-            Comment parentComment = commentRepository.findById(parentId).orElseThrow();
+            Comment parentComment = commentRepository.findById(parentId)
+                    .filter(Comment::exists)
+                    .orElseThrow(() -> new NotFoundException("존재하지 않는 기존 댓글입니다."));
             comment.setParent(parentComment);
         }
 
@@ -57,15 +58,14 @@ public class CommentService {
         checkIsValidAccountId(accountId);
 
         Comment comment = commentRepository.findById(idx)
+                .filter(Comment::exists)
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 댓글입니다."));
 
         checkCommentOwner(accountId, comment.getAccount().getIdx());
         comment.updateComment(param.getContent(), param.getStatus());
 
         Post post = comment.getPost();
-        if (Status.DELETED.equals(post.getStatus())) {
-            throw new NotFoundException("삭제된 게시물입니다.");
-        }
+        if (!post.exists()) throw new NotFoundException("존재하지 않는 게시물입니다.");
 
         Comment result = commentRepository.save(comment);
         return CommentUpdateResponse.from(result);
@@ -77,12 +77,11 @@ public class CommentService {
         checkIsValidAccountId(accountId);
 
         Comment comment = commentRepository.findById(idx)
+                .filter(Comment::exists)
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 댓글입니다."));
 
         Post post = comment.getPost();
-        if (Status.DELETED.equals(post.getStatus())) {
-            throw new NotFoundException("삭제된 게시물입니다.");
-        }
+        if (!post.exists()) throw new NotFoundException("존재하지 않는 게시물입니다.");
 
         checkCommentOwner(accountId, comment.getAccount().getIdx());
         comment.deleteComment();
@@ -93,11 +92,8 @@ public class CommentService {
 
     public List<CommentResponse> getList(Long postIdx) {
         Post post = postRepository.findById(postIdx)
+                .filter(Post::exists)
                 .orElseThrow(() -> new NotFoundException("존재하지 않는 게시물입니다."));
-
-        if (Status.DELETED.equals(post.getStatus())) {
-            throw new NotFoundException("삭제된 게시물입니다.");
-        }
 
         Long accountId = customUserDetailsService.getAccountIdx();
 
@@ -125,7 +121,7 @@ public class CommentService {
 
     private void checkCommentOwner(Long accountIdx, Long commentOwnerId) {
         if (!Objects.equals(accountIdx, commentOwnerId)) {
-            throw new BadRequestException("게시물 작성자가 아닙니다.");
+            throw new BadRequestException("댓글 작성자가 아닙니다.");
         }
     }
 

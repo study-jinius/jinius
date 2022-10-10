@@ -75,4 +75,8 @@ public class Comment extends BaseEntity {
         this.status = Status.DELETED;
         childList.forEach(Comment::deleteComment);
     }
+
+    public boolean exists() {
+        return this.status != Status.DELETED;
+    }
 }

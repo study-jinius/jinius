@@ -60,4 +60,8 @@ public class Post extends BaseEntity {
             comment.setPost(this);
         }
     }
+
+    public boolean exists() {
+        return this.status != Status.DELETED;
+    }
 }
