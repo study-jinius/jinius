@@ -1,6 +1,7 @@
 package com.study.jinius.post.model;
 
 import com.study.jinius.account.model.Account;
+import com.study.jinius.account.model.Role;
 import com.study.jinius.comment.model.Comment;
 import com.study.jinius.common.model.BaseEntity;
 import com.study.jinius.common.model.Status;
@@ -59,5 +60,9 @@ public class Post extends BaseEntity {
         if (comment.getPost() != this) {
             comment.setPost(this);
         }
+    }
+
+    public boolean exists() {
+        return this.status != Status.DELETED;
     }
 }
