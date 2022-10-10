@@ -67,12 +67,18 @@ public class SecurityConfig {
     }
 
 //    @Bean
+//    public GrantedAuthorityDefaults grantedAuthorityDefaults() {
+//        // hasAuthority 사용하면 Bean으로 등록할 필요없다.
+//        return new GrantedAuthorityDefaults("");
+//    }
+
+//    @Bean
 //    public JwtAccessTokenConverter jwtAccessTokenConverter() throws Exception {
 //        JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
 //        converter.setSigningKey("TEMP_KEY");
 //        converter.afterPropertiesSet();
 //        return converter;
-//    }1
+//    }
 
 //    @Bean
 //    public WebSecurityCustomizer webSecurityCustomizer() {
