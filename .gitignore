@@ -35,4 +35,6 @@ out/
 
 ### VS Code ###
 .vscode/
-팅
+
+### Etc
+**/**/application.yaml
