@@ -38,6 +38,7 @@ public class SecurityConfig {
                 .authorizeRequests()
                 .antMatchers("/swagger-ui/**", "/api-docs/**").permitAll()
                 .antMatchers("/api/accounts/**").permitAll()
+                .antMatchers("/api/auth/**").permitAll()
                 .anyRequest().authenticated()
 
                 // JWT를 쓰려면 Spring Security에서 기본적으로 지원하는 Session 설정을 해제해야 한다.
