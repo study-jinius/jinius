@@ -11,7 +11,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -41,6 +40,7 @@ public class SecurityConfig {
                 .antMatchers("/api/accounts/**").permitAll()
                 .antMatchers("/oauth2/**").permitAll()
                 .antMatchers("/login/**").permitAll()
+//                .antMatchers("/**").permitAll()
                 .anyRequest().authenticated()
 
                 // JWT를 쓰려면 Spring Security에서 기본적으로 지원하는 Session 설정을 해제해야 한다.
@@ -55,7 +55,7 @@ public class SecurityConfig {
                 .apply(new JwtSecurityConfig(jwtTokenProvider))
 
                 .and()
-                .oauth2Login();
+                .oauth2Login().defaultSuccessUrl("/");
         return http.build();
     }
 
