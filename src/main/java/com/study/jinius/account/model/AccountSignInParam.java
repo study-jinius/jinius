@@ -6,6 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AccountSignInParam {
-    private String stringId;
+    private String email;
     private String password;
 }

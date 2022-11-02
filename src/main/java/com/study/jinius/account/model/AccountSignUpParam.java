@@ -6,11 +6,11 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AccountSignUpParam {
-    private String stringId;
+    private String email;
     private String password;
     private String name;
 
     public Account toAccount() {
-        return new Account(stringId, password, name);
+        return new Account(email, password, name);
     }
 }

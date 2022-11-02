@@ -4,13 +4,13 @@ import lombok.Getter;
 
 @Getter
 public class AccountCreateRequest {
-    private String stringId;
+    private String email;
     private String password;
     private String name;
 
     public AccountSignUpParam toParam() {
         AccountSignUpParam param = new AccountSignUpParam();
-        param.setStringId(stringId);
+        param.setEmail(email);
         param.setPassword(password);
         param.setName(name);
 

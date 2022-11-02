@@ -35,7 +35,7 @@ public class AccountService {
     }
 
     public AccountSignUpResponse signUp(AccountSignUpParam param) {
-        if (accountRepository.findByStringId(param.getStringId()).orElse(null) != null) {
+        if (accountRepository.findByEmail(param.getEmail()).orElse(null) != null) {
             throw new AlreadyExistsException("이미 존재하는 회원입니다.");
         }
 
@@ -49,12 +49,12 @@ public class AccountService {
     }
 
     public AccountSignInResponse signIn(AccountSignInParam param) throws BadRequestException {
-        Account account = accountRepository.findByStringId(param.getStringId())
+        Account account = accountRepository.findByEmail(param.getEmail())
                 .filter(a -> passwordEncoder.matches(param.getPassword(), a.getPassword()))
                 .orElseThrow(() -> new BadRequestException("로그인 정보가 올바르지 않습니다."));
 
         JwtToken token = jwtTokenProvider.generateToken(String.valueOf(account.getIdx()));
-        commands.setex(param.getStringId(), JwtTokenProvider.REFRESH_TOKEN_EXPIRED_TIME, token.getRefresh());
+        commands.setex(param.getEmail(), JwtTokenProvider.REFRESH_TOKEN_EXPIRED_TIME, token.getRefresh());
         return AccountSignInResponse.from(token);
     }
 
