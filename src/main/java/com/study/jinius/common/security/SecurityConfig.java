@@ -1,5 +1,6 @@
 package com.study.jinius.common.security;
 
+import com.study.jinius.oauth.service.OAuth2SuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,6 +23,7 @@ public class SecurityConfig {
     private final JwtTokenProvider jwtTokenProvider;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -40,7 +42,6 @@ public class SecurityConfig {
                 .antMatchers("/api/accounts/**").permitAll()
                 .antMatchers("/oauth2/**").permitAll()
                 .antMatchers("/login/**").permitAll()
-//                .antMatchers("/**").permitAll()
                 .anyRequest().authenticated()
 
                 // JWT를 쓰려면 Spring Security에서 기본적으로 지원하는 Session 설정을 해제해야 한다.
@@ -55,7 +56,7 @@ public class SecurityConfig {
                 .apply(new JwtSecurityConfig(jwtTokenProvider))
 
                 .and()
-                .oauth2Login().defaultSuccessUrl("/");
+                .oauth2Login().successHandler(oAuth2SuccessHandler);
         return http.build();
     }
 
