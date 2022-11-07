@@ -5,6 +5,7 @@ import com.study.jinius.common.model.AuthType;
 import com.study.jinius.common.model.BaseEntity;
 import com.study.jinius.post.model.Post;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -47,12 +48,24 @@ public class Account extends BaseEntity {
     @Column(length = 15)
     @Enumerated(value = EnumType.STRING)
     private AuthType authType;
-    public Account(String email, String password, String name) {
+
+    @Builder
+    public Account(String email,
+                   String password,
+                   String name,
+                   LocalDateTime lastSignedInDate,
+                   Role role,
+                   List<Comment> commentList,
+                   List<Post> postList,
+                   AuthType authType) {
         this.email = email;
         this.password = password;
         this.name = name;
-        this.role = Role.USER;
-        this.authType = AuthType.EMAIL;
+        this.lastSignedInDate = lastSignedInDate;
+        this.role = role;
+        this.commentList = commentList;
+        this.postList = postList;
+        this.authType = authType;
     }
 
     public boolean isValidAccount() {
