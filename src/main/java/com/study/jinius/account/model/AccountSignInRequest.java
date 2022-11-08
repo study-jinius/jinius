@@ -6,12 +6,12 @@ import lombok.Setter;
 @Getter
 @Setter
 public class AccountSignInRequest {
-    private String stringId;
+    private String email;
     private String password;
 
     public AccountSignInParam toParam() {
         AccountSignInParam param = new AccountSignInParam();
-        param.setStringId(stringId);
+        param.setEmail(email);
         param.setPassword(password);
 
         return param;

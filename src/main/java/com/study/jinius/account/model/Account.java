@@ -1,16 +1,15 @@
 package com.study.jinius.account.model;
 
 import com.study.jinius.comment.model.Comment;
+import com.study.jinius.common.model.AuthType;
 import com.study.jinius.common.model.BaseEntity;
-import com.study.jinius.common.model.Status;
 import com.study.jinius.post.model.Post;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,11 +22,11 @@ public class Account extends BaseEntity {
     @GeneratedValue
     private Long idx;
 
-    @Size(min = 8, max = 30)
+    @Size(max = 30)
     @Column(unique = true, length = 30)
-    private String stringId;
+    private String email;
 
-    @Column(nullable = false)
+    @Column(length = 100, nullable = false)
     private String password;
 
     @Size(min = 1, max = 10)
@@ -36,6 +35,7 @@ public class Account extends BaseEntity {
 
     private LocalDateTime lastSignedInDate;
 
+    @Size(max = 15)
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false, length = 30)
     private Role role;
@@ -45,11 +45,27 @@ public class Account extends BaseEntity {
 
     @OneToMany(mappedBy = "account")
     private List<Post> postList;
-    public Account(String stringId, String password, String name) {
-        this.stringId = stringId;
+    @Column(length = 15)
+    @Enumerated(value = EnumType.STRING)
+    private AuthType authType;
+
+    @Builder
+    public Account(String email,
+                   String password,
+                   String name,
+                   LocalDateTime lastSignedInDate,
+                   Role role,
+                   List<Comment> commentList,
+                   List<Post> postList,
+                   AuthType authType) {
+        this.email = email;
         this.password = password;
         this.name = name;
-        this.role = Role.USER;
+        this.lastSignedInDate = lastSignedInDate;
+        this.role = role;
+        this.commentList = commentList;
+        this.postList = postList;
+        this.authType = authType;
     }
 
     public boolean isValidAccount() {
